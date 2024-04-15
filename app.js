@@ -13,7 +13,7 @@ const { limiter } = require('./utils/constants');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'C:/Users/555/Desktop/diplom-project/src/images/uploads');
+    cb(null, path.join(__dirname, './uploads'));
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = '_' + Date.now() + '_' + Math.round(Math.random() * 1E9);
@@ -51,6 +51,8 @@ const fileTake = (req, res) => {
   }
   return res.status(201).send({ imageNames: arr });
 };
+
+app.use('/uploads', express.static('uploads'));
 
 app.post('/images', upload.array('images', 10), fileTake);
 
