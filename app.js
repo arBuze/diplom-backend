@@ -92,11 +92,10 @@ app.post('/repair', (req, res) => {
   /* сделать создание модели заявки */
   return res.status(201).send(
     {
-      application: {
-        description,
-        contact,
-        files: namesArray,
-      },
+      description,
+      contact,
+      files: namesArray,
+      createdAt: Date.now(),
     },
   );
 });
