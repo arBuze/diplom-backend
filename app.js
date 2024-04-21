@@ -4,14 +4,15 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const multer = require('multer');
+/* const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs'); */
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const { limiter } = require('./utils/constants');
+const router = require('./routes/index');
 
-const storage = multer.diskStorage({
+/* const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, './uploads/temp'));
   },
@@ -20,7 +21,7 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + uniqueSuffix);
   },
 });
-const upload = multer({ storage });
+const upload = multer({ storage }); */
 
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/sitedb' } = process.env;
 const app = express();
@@ -37,26 +38,29 @@ mongoose.connect(`${MONGO_URL}`, {
   useNewUrlParser: true,
 });
 
-const fileTake = (req, res) => {
-  console.log(req.files);
+app.use('/uploads', express.static('uploads'));
+
+/* const fileTake = (req, res) => {
+  const { maxFiles } = req.body;
   const arr = [];
   for (let i = 0; i < req.files.length; i += 1) {
-    const name = req.files[i].filename + path.extname(req.files[i].originalname);
-    const newName = req.files[i].path + path.extname(req.files[i].originalname);
-    fs.rename(req.files[i].path, newName, (err) => {
-      if (err) console.log(err);
-      console.log(arr, i);
-    });
-    arr.push(name);
+    if (i < maxFiles) {
+      const name = req.files[i].filename + path.extname(req.files[i].originalname);
+      const newName = req.files[i].path + path.extname(req.files[i].originalname);
+      fs.rename(req.files[i].path, newName, (err) => {
+        if (err) console.log(err);
+      });
+      arr.push(name);
+    } else {
+      break;
+    }
   }
-  console.log(fs.readdirSync(path.join(__dirname, './uploads/temp')), 'ASas');
+
   return res.status(201).send({ imageNames: arr });
 };
 
-app.use('/uploads', express.static('uploads'));
-
-app.post('/images', upload.array('images', 10), fileTake);
-app.delete('/images', (req, res) => {
+app.post('/repair/images', upload.array('images', 10), fileTake);
+app.delete('/repair/images', (req, res) => {
   const { fileName } = req.body;
   const dir = path.join(__dirname, './uploads/temp', fileName);
 
@@ -87,9 +91,6 @@ app.post('/repair', (req, res) => {
     namesArray.push(element);
   });
 
-  console.log(namesArray, 'paths');
-
-  /* сделать создание модели заявки */
   return res.status(201).send(
     {
       description,
@@ -98,7 +99,9 @@ app.post('/repair', (req, res) => {
       createdAt: Date.now(),
     },
   );
-});
+}); */
+
+app.use(router);
 
 app.use(errors());
 

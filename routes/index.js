@@ -9,6 +9,8 @@ router.post('/signin', login);
 
 router.use('/users', auth, require('./users'));
 router.use('/products', require('./products'));
+router.use('/orders', require('./orders'));
+router.use('/repair', require('./repairs'));
 router.use('/feedbacks', require('./feedbacks'));
 
 router.use('*', (req, res, next) => {

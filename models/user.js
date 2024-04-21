@@ -6,32 +6,38 @@ const NotAuthorizedError = require('../errors/NotAuthorizedError');
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    unique: true,
     validate: {
       validator: (v) => isEmail(v),
       message: 'Неправильный формат почты',
     },
   },
+  phone: {
+    type: String,
+    length: 10,
+  },
   password: {
     type: String,
-    required: true,
     minlength: 5,
     select: false,
+  },
+  isGuest: {
+    type: Boolean,
+    default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
   name: {
     type: String,
     minlength: 2,
     maxlength: 30,
+    default: 'Гость',
   },
   lastName: {
     type: String,
     minlength: 2,
     maxlength: 60,
-  },
-  phone: {
-    type: String,
-    length: 10,
-    unique: true,
   },
   favorites: [
     {
@@ -41,37 +47,59 @@ const userSchema = new mongoose.Schema({
   ],
   cart: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'product',
-    },
-  ],
-  orders: [
-    {
-      createdAt: {
-        type: Date,
-        default: Date.now,
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'product',
       },
-      products: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'product',
-        },
-      ],
-      status: {
+      category: {
         type: String,
+        required: true,
+      },
+      image: {
+        type: String,
+        required: true,
+      },
+      productName: {
+        type: String,
+        required: true,
+      },
+      productCost: {
+        type: Number,
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
       },
     },
   ],
-  chats: [
+  /* chats: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'chat',
     },
-  ],
+  ], */
 }, { versionKey: false });
 
-userSchema.statics.findByCredentials = function (login, password) {
-  return this.findOne({ login }).select('+password')
+userSchema.statics.findByEmail = function (email, password) {
+  return this.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new NotAuthorizedError('Неправильные логин или пароль'));
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new NotAuthorizedError('Неправильные логин или пароль'));
+          }
+          return user;
+        });
+    });
+};
+
+userSchema.statics.findByPhone = function (phone, password) {
+  return this.findOne({ phone }).select('+password')
     .then((user) => {
       if (!user) {
         return Promise.reject(new NotAuthorizedError('Неправильные логин или пароль'));

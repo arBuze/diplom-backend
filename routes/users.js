@@ -5,21 +5,20 @@ const {
   addToFavorite,
   deleteFromFavorite,
   addToCart,
+  changeQuantity,
   deleteFromCart,
   clearCart,
-  createOrder,
 } = require('../controllers/users');
 
 router.get('/me', getCurrentUser);
 router.patch('/me', updateUserData);
 
-router.put('/favorite', addToFavorite);
-router.delete('/favorite/:productId', deleteFromFavorite);
+router.patch('/me/favorite', addToFavorite);
+router.delete('/me/favorite/:productId', deleteFromFavorite);
 
-router.put('/cart', addToCart);
-router.delete('/cart/:productId', deleteFromCart);
-router.delete('/cart', clearCart);
-
-router.put('/order', createOrder);
+router.patch('/me/cart', addToCart);
+router.patch('/me/cart/:productId', changeQuantity);
+router.delete('/me/cart/:productId', deleteFromCart);
+router.delete('/me/cart', clearCart);
 
 module.exports = router;

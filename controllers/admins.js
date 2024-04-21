@@ -19,9 +19,9 @@ const {
 const { JWT_CODE } = process.env;
 
 module.exports.createAdmin = (req, res, next) => {
-  const { login, password, adminId } = req.body;
+  const { login, password } = req.body;
 
-  Admin.findById(adminId)
+  Admin.findById(req.admin._id)
     .then((admin) => {
       if (!admin) {
         return next(new ForbiddenError(createForbiddenErr));
@@ -40,4 +40,16 @@ module.exports.createAdmin = (req, res, next) => {
       }
       return next(new ServerError(serverErr));
     });
+};
+
+module.exports.adminLogin = (req, res, next) => {
+  const { login, password } = req.body;
+
+  Admin.findByCredentials(login, password)
+    .then((admin) => {
+      const token = jwt.sign({ _id: admin._id }, JWT_CODE, { expiresIn: '3d' });
+
+      res.send({ token });
+    })
+    .catch(next);
 };

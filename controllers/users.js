@@ -22,33 +22,65 @@ const { JWT_SECRET } = process.env;
 
 /* создание пользователя */
 module.exports.createUser = (req, res, next) => {
-  const { email, password, phone } = req.body;
+  const {
+    email,
+    password,
+    phone,
+    isGuest,
+  } = req.body;
+  let guest = true;
 
-  bcrypt.hash(password, 10)
-    .then((hash) => {
-      if (email) {
-        return User.create({ email, password: hash });
-      }
-      if (phone) {
-        return User.create({ phone, password: hash });
-      }
+  if (!isGuest) {
+    guest = false;
+  }
+
+  if (guest) {
+    User.create({ isGuest: true })
+      .then((user) => {
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+        res.status(HTTP_STATUS_CREATED).send({ token });
+      })
+      .catch(() => next(new ServerError(serverErr)));
+  } else {
+    if (!email && !phone) {
       return next(new BadRequestError(badRequestCreateUser));
-    })
-    .then(() => {
-      if (email) {
-        return res.status(HTTP_STATUS_CREATED).send({ email });
-      }
-      return res.status(HTTP_STATUS_CREATED).send({ phone });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(new BadRequestError(badRequestCreateUser));
-      }
-      if (err.code === 11000) {
-        return next(new ConflictError(conflictErr));
-      }
-      return next(new ServerError(serverErr));
-    });
+    }
+
+    if (email) {
+      User.findOne({ email })
+        .then((user) => {
+          if (!user) {
+            return bcrypt.hash(password, 10);
+          }
+          return next(new ConflictError(conflictErr));
+        })
+        .then((hash) => User.create({ email, password: hash, isGuest: guest }))
+        .then(() => res.status(HTTP_STATUS_CREATED).send({ email }))
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            return next(new BadRequestError(badRequestCreateUser));
+          }
+          return next(new ServerError(serverErr));
+        });
+    }
+    if (phone) {
+      User.findOne({ phone })
+        .then((user) => {
+          if (!user) {
+            return bcrypt.hash(password, 10);
+          }
+          return next(new ConflictError(conflictErr));
+        })
+        .then((hash) => User.create({ phone, password: hash, isGuest: guest }))
+        .then(() => res.status(HTTP_STATUS_CREATED).send({ phone }))
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            return next(new BadRequestError(badRequestCreateUser));
+          }
+          return next(new ServerError(serverErr));
+        });
+    }
+  }
 };
 
 /* получение данных пользователя */
@@ -153,9 +185,60 @@ module.exports.deleteFromFavorite = (req, res, next) => {
 
 /* добавление в корзину */
 module.exports.addToCart = (req, res, next) => {
+  const {
+    productId,
+    category,
+    image,
+    productName,
+    productCost,
+    quantity,
+  } = req.body;
+
   User.findByIdAndUpdate(
     req.user._id,
-    { $addToSet: { cart: req.params.productId } },
+    {
+      $addToSet:
+      {
+        cart: {
+          productId,
+          category,
+          image,
+          productName,
+          productCost,
+          quantity,
+        },
+      },
+    },
+    { new: true },
+  )
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError(userNotFound));
+      }
+      return res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new BadRequestError(badRequestId));
+      }
+      return next(new ServerError(serverErr));
+    });
+};
+
+/* изменение количества товара в корзине */
+module.exports.changeQuantity = (req, res, next) => {
+  const { newQuantity } = req.body;
+
+  User.findOneAndUpdate(
+    {
+      _id: req.user._id,
+      'cart.cardId': req.params.productId,
+    },
+    {
+      $set: {
+        'cart.$.quantity': newQuantity,
+      },
+    },
     { new: true },
   )
     .then((user) => {
@@ -197,7 +280,7 @@ module.exports.deleteFromCart = (req, res, next) => {
 module.exports.clearCart = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
-    { $set: { cart: null } },
+    { $set: { cart: [] } },
     { new: true },
   )
     .then((user) => {
@@ -214,35 +297,12 @@ module.exports.clearCart = (req, res, next) => {
     });
 };
 
-/* создание заказа */
-module.exports.createOrder = (req, res, next) => {
-  const { products, status } = req.body;
-
-  User.findByIdAndUpdate(
-    req.user._id,
-    { $addToSet: { orders: { products, status } } },
-    { new: true },
-  )
-    .then((user) => {
-      if (!user) {
-        return next(new NotFoundError('Передан несуществующий _id пользователя'));
-      }
-      return res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Некорректный _id пользователя'));
-      }
-      return next(new ServerError(serverErr));
-    });
-};
-
 /* вход */
 module.exports.login = (req, res, next) => {
   const { email, password, phone } = req.body;
 
   if (email) {
-    return User.findByCredentials(email, password)
+    return User.findByEmail(email, password)
       .then((user) => {
         const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
@@ -250,7 +310,7 @@ module.exports.login = (req, res, next) => {
       })
       .catch(next);
   }
-  return User.findByCredentials(phone, password)
+  return User.findByPhone(phone, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
