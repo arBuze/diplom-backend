@@ -8,10 +8,10 @@ router.post('/signup', createUser);
 router.post('/signin', login);
 
 router.use('/users', auth, require('./users'));
+router.use('/products/:productId/feedbacks', require('./feedbacks'));
 router.use('/products', require('./products'));
 router.use('/orders', require('./orders'));
 router.use('/repair', require('./repairs'));
-router.use('/feedbacks', require('./feedbacks'));
 
 router.use('*', (req, res, next) => {
   next(new NotFoundError(errorMessages.pageNotFound));

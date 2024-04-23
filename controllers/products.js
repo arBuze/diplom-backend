@@ -26,7 +26,7 @@ module.exports.getAllProducts = (req, res, next) => {
 module.exports.createProduct = (req, res, next) => {
   const {
     name,
-    section,
+    category,
     images,
     characteristics,
     price,
@@ -35,7 +35,7 @@ module.exports.createProduct = (req, res, next) => {
 
   Product.create({
     name,
-    section,
+    category,
     images,
     characteristics,
     price,
@@ -54,7 +54,7 @@ module.exports.createProduct = (req, res, next) => {
 module.exports.updateProductData = (req, res, next) => {
   const {
     name,
-    section,
+    category,
     images,
     characteristics,
     price,
@@ -67,7 +67,7 @@ module.exports.updateProductData = (req, res, next) => {
     {
       $set: {
         name,
-        section,
+        category,
         images,
         characteristics,
         price,

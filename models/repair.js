@@ -9,15 +9,15 @@ const repairSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  owner: {
+  /* owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
-  },
-  isGuest: {
+  }, */
+  /* isGuest: {
     type: Boolean,
     required: true,
-  },
+  }, */
   createdAt: {
     type: Date,
     default: Date.now,
@@ -27,6 +27,6 @@ const repairSchema = new mongoose.Schema({
       type: String,
     },
   ],
-});
+}, { versionKey: false });
 
 module.exports = mongoose.model('repair', repairSchema);

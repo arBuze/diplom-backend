@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     required: true,
+    type: String,
     enum: ['в сборке', 'готов к выдаче', 'выполнен'],
     description: 'Не совпадает с возможными значениями',
   },
@@ -47,6 +48,6 @@ const orderSchema = new mongoose.Schema({
       },
     },
   ],
-});
+}, { versionKey: false });
 
 module.exports = mongoose.model('order', orderSchema);

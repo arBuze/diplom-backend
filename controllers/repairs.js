@@ -11,15 +11,15 @@ module.exports.createApplication = (req, res, next) => {
   const {
     description,
     contact,
-    isGuest,
+    /* isGuest, */
     fileNames,
   } = req.body;
 
   Repair.create({
     description,
     contact,
-    owner: req.user_id,
-    isGuest,
+    /* owner: req.user_id, */
+    /* isGuest, */
     files: fileNames || [],
   })
     .then((app) => res.status(HTTP_STATUS_CREATED).send({ application: app }))
@@ -50,7 +50,16 @@ module.exports.fileTake = (req, res) => {
       });
       arr.push(name);
     } else {
-      break;
+      try {
+        if (fs.existsSync(req.files[i].path)) {
+          fs.unlink(req.files[i].path, (err) => {
+            if (err) console.log(err);
+            console.log({ message: 'File has been deleted' });
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 

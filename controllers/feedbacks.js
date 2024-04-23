@@ -22,10 +22,10 @@ module.exports.getFeedback = (req, res, next) => {
 
 /* создание отзыва */
 module.exports.createFeedback = (req, res, next) => {
-  const { rating, comment } = req.body;
+  const { rating, comment, name } = req.body;
 
   Feedback.create({
-    owner: req.user._id,
+    owner: /* req.user._id */name,
     product: req.params.productId,
     rating,
     comment,
@@ -34,6 +34,23 @@ module.exports.createFeedback = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError(badRequestCreateFeedback));
+      }
+      return next(new ServerError(serverErr));
+    });
+};
+
+module.exports.deleteFeedback = (req, res, next) => {
+  Feedback.findById(req.params.feedbackId)
+    .then((feedback) => {
+      if (!feedback) {
+        return next(new NotFoundError(feedbackNotFound));
+      }
+      return Feedback.deleteOne(feedback);
+    })
+    .then(() => res.send({ message: 'Отзыв удален' }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new BadRequestError(badRequestId));
       }
       return next(new ServerError(serverErr));
     });

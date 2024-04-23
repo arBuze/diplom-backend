@@ -5,11 +5,12 @@ const {
   updateProductData,
   deleteProduct,
 } = require('../controllers/products');
+const { adminAuth, checkAdmin } = require('../middlewares/adminAuth');
 
 router.get('/', getAllProducts);
-router.post('/', createProduct);
+router.post('/', adminAuth, checkAdmin, createProduct);
 
-router.patch('/:productId', updateProductData);
-router.delete('/:productId', deleteProduct);
+router.patch('/:productId', adminAuth, checkAdmin, updateProductData);
+router.delete('/:productId', adminAuth, checkAdmin, deleteProduct);
 
 module.exports = router;

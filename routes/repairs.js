@@ -2,6 +2,7 @@ const router = require('express').Router();
 const path = require('path');
 const multer = require('multer');
 const { auth } = require('../middlewares/auth');
+const { adminAuth, checkAdmin } = require('../middlewares/adminAuth');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -22,11 +23,11 @@ const {
   deleteImages,
 } = require('../controllers/repairs');
 
-router.post('/', auth, createApplication);
-router.get('/', getAllApplications);
-router.get('/me', getUserApplications);
+router.post('/', /* auth, */ createApplication);
+router.get('/', adminAuth, checkAdmin, getAllApplications);
+router.get('/me', auth, getUserApplications);
 
-router.post('/images', upload.array('images', 10), fileTake);
+router.post('/images', upload.array('images'), fileTake);
 router.delete('/images', deleteImages);
 
 module.exports = router;

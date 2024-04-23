@@ -7,8 +7,9 @@ const {
   deleteOrder,
 } = require('../controllers/orders');
 const { auth } = require('../middlewares/auth');
+const { adminAuth, checkAdmin } = require('../middlewares/adminAuth');
 
-router.get('/', getAllOrders);
+router.get('/', adminAuth, checkAdmin, getAllOrders);
 router.get('/me', auth, getUserOrders);
 
 router.post('/', auth, createOrder);
