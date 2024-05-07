@@ -27,8 +27,15 @@ const feedbackSchema = new mongoose.Schema({
   },
   likes: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
+      owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+      },
+      value: {
+        type: Number,
+        enum: [1, -1],
+        description: 'Значениями могут быть только 1 и -1',
+      },
     },
   ],
 }, { versionKey: false });

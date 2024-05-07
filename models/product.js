@@ -36,12 +36,13 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  sale: {
+  /*   sale: {
     type: Number,
-  },
+  }, */
   descripton: {
     type: String,
     minlength: 2,
+    required: true,
   },
   rating: {
     type: Number,

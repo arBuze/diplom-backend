@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const isEmail = require('validator/lib/isEmail');
 
 const orderSchema = new mongoose.Schema({
   createdAt: {
@@ -14,10 +15,24 @@ const orderSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  contacts: {
+    phone: {
+      type: String,
+      required: true,
+      length: 10,
+    },
+    email: {
+      type: String,
+      validate: {
+        validator: (v) => isEmail(v),
+        message: 'Неправильный формат почты',
+      },
+    },
+  },
   status: {
     required: true,
     type: String,
-    enum: ['в сборке', 'готов к выдаче', 'выполнен'],
+    enum: ['ждет оплаты', 'оплачен', 'в сборке', 'готов к выдаче', 'выполнен', 'отменен'],
     description: 'Не совпадает с возможными значениями',
   },
   products: [

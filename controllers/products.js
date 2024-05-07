@@ -58,7 +58,7 @@ module.exports.updateProductData = (req, res, next) => {
     images,
     characteristics,
     price,
-    sale,
+    /* sale, */
     description,
   } = req.body;
 
@@ -71,7 +71,7 @@ module.exports.updateProductData = (req, res, next) => {
         images,
         characteristics,
         price,
-        sale,
+        /* sale, */
         description,
       },
     },

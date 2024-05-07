@@ -14,12 +14,14 @@ module.exports.createOrder = (req, res, next) => {
     isGuest,
     status,
     products,
+    contacts,
   } = req.body;
 
   Order.create({
     isGuest,
     status,
     products,
+    contacts,
     owner: req.user._id,
   })
     .then((order) => res.status(HTTP_STATUS_CREATED).send(order))

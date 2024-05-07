@@ -1,6 +1,7 @@
 const rateLimit = require('express-rate-limit');
 
 const urlRegex = /^https?\:\/\/[w{3}\.]?[a-zA-Z0-9\-\._~\:\\?#\[\]@!\$&'\(\)\*\+,;=]{1,}[a-zA-Z0-9\-\._~\:\/\?#\[\]@!\$&'\(\)\*\+,%;=]{1,}#?$/; // eslint-disable-line
+const phoneNumberRegex = /\d{10}/;
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -28,6 +29,7 @@ const deleteMessage = 'Товар удален из базы данных';
 
 module.exports = {
   urlRegex,
+  phoneNumberRegex,
   limiter,
   errorMessages,
   deleteMessage,

@@ -23,7 +23,7 @@ const {
   deleteImages,
 } = require('../controllers/repairs');
 
-router.post('/', /* auth, */ createApplication);
+router.post('/', auth, createApplication);
 router.get('/', adminAuth, checkAdmin, getAllApplications);
 router.get('/me', auth, getUserApplications);
 

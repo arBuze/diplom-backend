@@ -18,7 +18,7 @@ module.exports.createApplication = (req, res, next) => {
   Repair.create({
     description,
     contact,
-    /* owner: req.user_id, */
+    owner: req.user_id,
     /* isGuest, */
     files: fileNames || [],
   })

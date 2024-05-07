@@ -2,16 +2,20 @@ const router = require('express').Router();
 const {
   getCurrentUser,
   updateUserData,
+  changePassword,
   addToFavorite,
   deleteFromFavorite,
   addToCart,
   changeQuantity,
   deleteFromCart,
   clearCart,
+  deleteUser,
 } = require('../controllers/users');
 
 router.get('/me', getCurrentUser);
 router.patch('/me', updateUserData);
+router.patch('/me/pas', changePassword);
+router.delete('/me', deleteUser);
 
 router.patch('/me/favorite', addToFavorite);
 router.delete('/me/favorite/:productId', deleteFromFavorite);
