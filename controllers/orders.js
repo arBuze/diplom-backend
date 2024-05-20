@@ -15,7 +15,14 @@ module.exports.createOrder = (req, res, next) => {
     status,
     products,
     contacts,
+    payment,
   } = req.body;
+
+  console.log(isGuest,
+    status,
+    products,
+    contacts,
+    payment);
 
   Order.create({
     isGuest,
@@ -23,6 +30,7 @@ module.exports.createOrder = (req, res, next) => {
     products,
     contacts,
     owner: req.user._id,
+    payment,
   })
     .then((order) => res.status(HTTP_STATUS_CREATED).send(order))
     .catch((err) => {

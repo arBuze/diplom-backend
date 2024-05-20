@@ -17,7 +17,7 @@ router.patch('/me', updateUserData);
 router.patch('/me/pas', changePassword);
 router.delete('/me', deleteUser);
 
-router.patch('/me/favorite', addToFavorite);
+router.patch('/me/favorite/:productId', addToFavorite);
 router.delete('/me/favorite/:productId', deleteFromFavorite);
 
 router.patch('/me/cart', addToCart);

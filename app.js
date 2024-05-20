@@ -25,7 +25,7 @@ mongoose.connect(`${MONGO_URL}`, {
 });
 
 app.use('/uploads', express.static('uploads'));
-app.use('/product_images', express.static('product_images'));
+app.use('/src-images', express.static('src-images'));
 
 app.use(router);
 

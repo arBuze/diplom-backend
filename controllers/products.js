@@ -1,4 +1,6 @@
 const { HTTP_STATUS_CREATED } = require('http2').constants;
+const path = require('path');
+const fs = require('fs');
 
 const Product = require('../models/product');
 const BadRequestError = require('../errors/BadRequestError');
@@ -31,6 +33,8 @@ module.exports.createProduct = (req, res, next) => {
     characteristics,
     price,
     description,
+    quantity,
+    articule,
   } = req.body;
 
   Product.create({
@@ -40,6 +44,8 @@ module.exports.createProduct = (req, res, next) => {
     characteristics,
     price,
     description,
+    articule,
+    quantity,
   })
     .then((product) => res.status(HTTP_STATUS_CREATED).send(product))
     .catch((err) => {
@@ -60,6 +66,8 @@ module.exports.updateProductData = (req, res, next) => {
     price,
     /* sale, */
     description,
+    quantity,
+    articule,
   } = req.body;
 
   Product.findByIdAndUpdate(
@@ -73,6 +81,37 @@ module.exports.updateProductData = (req, res, next) => {
         price,
         /* sale, */
         description,
+        quantity,
+        articule,
+      },
+    },
+    {
+      returnDocument: 'after',
+      runValidators: true,
+    },
+  )
+    .then((product) => {
+      if (!product) {
+        return next(new NotFoundError());
+      }
+      return res.send(product);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError(badRequestUpdateProduct));
+      }
+      return next(new ServerError(serverErr));
+    });
+};
+
+module.exports.upgradeProductRating = (req, res, next) => {
+  const { rating } = req.body;
+
+  Product.findByIdAndUpdate(
+    req.params.productId,
+    {
+      $set: {
+        rating,
       },
     },
     {
@@ -111,4 +150,36 @@ module.exports.deleteProduct = (req, res, next) => {
       }
       return next(new ServerError(serverErr));
     });
+};
+
+module.exports.fileTake = (req, res) => {
+  const arr = [];
+
+  for (let i = 0; i < req.files.length; i += 1) {
+    const name = req.files[i].filename + path.extname(req.files[i].originalname);
+    const newName = req.files[i].path + path.extname(req.files[i].originalname);
+    fs.rename(req.files[i].path, newName, (err) => {
+      if (err) console.log(err);
+    });
+    arr.push(name);
+  }
+
+  return res.status(201).send({ imageNames: arr });
+};
+
+module.exports.deleteImages = (req, res, next) => {
+  const { fileName } = req.body;
+  const dir = path.join(__dirname, '../src-images/product_images', fileName);
+
+  try {
+    if (fs.existsSync(dir)) {
+      fs.unlink(dir, (err) => {
+        if (err) return next(new NotFoundError('dqawdaa'));
+        return res.status(200).send({ message: 'File has been deleted' });
+      });
+    }
+    return 0;
+  } catch (err) {
+    return next(new NotFoundError('asdas'));
+  }
 };

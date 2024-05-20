@@ -296,7 +296,7 @@ module.exports.changeQuantity = (req, res, next) => {
   User.findOneAndUpdate(
     {
       _id: req.user._id,
-      'cart.cardId': req.params.productId,
+      'cart.productId': req.params.productId,
     },
     {
       $set: {
@@ -321,9 +321,30 @@ module.exports.changeQuantity = (req, res, next) => {
 
 /* удаление из корзины */
 module.exports.deleteFromCart = (req, res, next) => {
+  const { card } = req.body;
+  const {
+    category,
+    image,
+    productName,
+    productCost,
+    quantity,
+  } = card;
+
   User.findByIdAndUpdate(
     req.user._id,
-    { $pull: { cart: req.params.productId } },
+    {
+      $pull:
+      {
+        cart: {
+          productId: req.params.productId,
+          category,
+          image,
+          productName,
+          productCost,
+          quantity,
+        },
+      },
+    },
     { new: true },
   )
     .then((user) => {
@@ -393,7 +414,7 @@ module.exports.login = (req, res, next) => {
       .then((user) => {
         const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
-        res.cookie('jwt', token, {
+        res.cookie('jwtU', token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
           secure: true,
@@ -407,7 +428,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
-      res.cookie('jwt', token, {
+      res.cookie('jwtU', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
         secure: true,

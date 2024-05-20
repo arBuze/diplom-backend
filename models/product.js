@@ -24,11 +24,11 @@ const productSchema = new mongoose.Schema({
     {
       name: {
         type: String,
-        required: true,
+        /* required: true, */
       },
       value: {
         type: String,
-        required: true,
+        /* required: true, */
       },
     },
   ],
@@ -39,13 +39,21 @@ const productSchema = new mongoose.Schema({
   /*   sale: {
     type: Number,
   }, */
-  descripton: {
+  description: {
     type: String,
     minlength: 2,
     required: true,
   },
+  articule: {
+    type: String,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
   rating: {
     type: Number,
+    default: 0,
   },
 }, { versionKey: false });
 

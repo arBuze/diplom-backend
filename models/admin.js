@@ -24,10 +24,10 @@ const adminSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 60,
   },
-  phone: {
+  /* phone: {
     type: String,
     length: 10,
-  },
+  }, */
 }, { versionKey: false });
 
 adminSchema.statics.findByCredentials = function (login, password) {

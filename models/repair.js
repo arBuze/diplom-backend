@@ -9,11 +9,11 @@ const repairSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  /* owner: {
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
-  }, */
+  },
   /* isGuest: {
     type: Boolean,
     required: true,
@@ -27,6 +27,10 @@ const repairSchema = new mongoose.Schema({
       type: String,
     },
   ],
+  status: {
+    type: Boolean,
+    required: true,
+  },
 }, { versionKey: false });
 
 module.exports = mongoose.model('repair', repairSchema);

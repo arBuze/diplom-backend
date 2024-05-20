@@ -3,6 +3,7 @@ const path = require('path');
 const multer = require('multer');
 const { auth } = require('../middlewares/auth');
 const { adminAuth, checkAdmin } = require('../middlewares/adminAuth');
+const { validateCreateApp } = require('../middlewares/validate');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -23,7 +24,7 @@ const {
   deleteImages,
 } = require('../controllers/repairs');
 
-router.post('/', auth, createApplication);
+router.post('/', auth, validateCreateApp, createApplication);
 router.get('/', adminAuth, checkAdmin, getAllApplications);
 router.get('/me', auth, getUserApplications);
 

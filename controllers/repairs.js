@@ -13,17 +13,24 @@ module.exports.createApplication = (req, res, next) => {
     contact,
     /* isGuest, */
     fileNames,
+    status,
   } = req.body;
+
+  console.log(req.body);
 
   Repair.create({
     description,
     contact,
-    owner: req.user_id,
+    owner: req.user._id,
     /* isGuest, */
-    files: fileNames || [],
+    files: fileNames,
+    status,
   })
     .then((app) => res.status(HTTP_STATUS_CREATED).send({ application: app }))
-    .catch(() => next(new ServerError(errorMessages.serverErr)));
+    .catch((err) => {
+      console.log(err);
+      return next(new ServerError(errorMessages.serverErr));
+    });
 };
 
 module.exports.getAllApplications = (req, res, next) => {

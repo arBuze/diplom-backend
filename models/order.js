@@ -35,6 +35,12 @@ const orderSchema = new mongoose.Schema({
     enum: ['ждет оплаты', 'оплачен', 'в сборке', 'готов к выдаче', 'выполнен', 'отменен'],
     description: 'Не совпадает с возможными значениями',
   },
+  payment: {
+    required: true,
+    type: String,
+    enum: ['СБП', 'при получении'],
+    description: 'Не совпадает с возможными значениями',
+  },
   products: [
     {
       productId: {
