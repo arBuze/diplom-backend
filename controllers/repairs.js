@@ -6,6 +6,7 @@ const Repair = require('../models/repair');
 const ServerError = require('../errors/ServerError');
 const { errorMessages } = require('../utils/constants');
 const NotFoundError = require('../errors/NotFoundError');
+const BadRequestError = require('../errors/BadRequestError');
 
 module.exports.createApplication = (req, res, next) => {
   const {
@@ -16,8 +17,6 @@ module.exports.createApplication = (req, res, next) => {
     status,
   } = req.body;
 
-  console.log(req.body);
-
   Repair.create({
     description,
     contact,
@@ -27,10 +26,7 @@ module.exports.createApplication = (req, res, next) => {
     status,
   })
     .then((app) => res.status(HTTP_STATUS_CREATED).send({ application: app }))
-    .catch((err) => {
-      console.log(err);
-      return next(new ServerError(errorMessages.serverErr));
-    });
+    .catch(() => next(new ServerError(errorMessages.serverErr)));
 };
 
 module.exports.getAllApplications = (req, res, next) => {
@@ -43,6 +39,35 @@ module.exports.getUserApplications = (req, res, next) => {
   Repair.find({ owner: req.user._id })
     .then((apps) => res.send(apps))
     .catch(() => next(new ServerError(errorMessages.serverErr)));
+};
+
+module.exports.changeStatus = (req, res, next) => {
+  const { status } = req.body;
+
+  Repair.findByIdAndUpdate(
+    req.params.repairId,
+    {
+      $set: {
+        seen: status,
+      },
+    },
+    {
+      returnDocument: 'after',
+      runValidators: true,
+    },
+  )
+    .then((app) => {
+      if (!app) {
+        return next(new NotFoundError('app not found'));
+      }
+      return res.send(app);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError('bad body params'));
+      }
+      return next(new ServerError(errorMessages.serverErr));
+    });
 };
 
 module.exports.fileTake = (req, res) => {

@@ -27,7 +27,7 @@ const repairSchema = new mongoose.Schema({
       type: String,
     },
   ],
-  status: {
+  seen: {
     type: Boolean,
     required: true,
   },

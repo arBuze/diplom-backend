@@ -20,6 +20,7 @@ const {
   createApplication,
   getAllApplications,
   getUserApplications,
+  changeStatus,
   fileTake,
   deleteImages,
 } = require('../controllers/repairs');
@@ -27,6 +28,7 @@ const {
 router.post('/', auth, validateCreateApp, createApplication);
 router.get('/', adminAuth, checkAdmin, getAllApplications);
 router.get('/me', auth, getUserApplications);
+router.patch('/:repairId', adminAuth, changeStatus);
 
 router.post('/images', upload.array('images'), fileTake);
 router.delete('/images', deleteImages);

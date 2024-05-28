@@ -18,12 +18,6 @@ module.exports.createOrder = (req, res, next) => {
     payment,
   } = req.body;
 
-  console.log(isGuest,
-    status,
-    products,
-    contacts,
-    payment);
-
   Order.create({
     isGuest,
     status,

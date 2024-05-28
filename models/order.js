@@ -69,6 +69,10 @@ const orderSchema = new mongoose.Schema({
       },
     },
   ],
+  toBuild: {
+    type: String,
+    required: true,
+  },
 }, { versionKey: false });
 
 module.exports = mongoose.model('order', orderSchema);

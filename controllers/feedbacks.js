@@ -15,25 +15,58 @@ const {
 
 /* получение отзывов */
 module.exports.getFeedback = (req, res, next) => {
-  Feedback.find({ product: req.params.productId })
+  Feedback.find({ product: req.params.productId, approved: true })
     .then((feedbacks) => res.send(feedbacks))
     .catch(() => next(new ServerError(serverErr)));
 };
 
 /* создание отзыва */
 module.exports.createFeedback = (req, res, next) => {
-  const { rating, comment, name } = req.body;
+  const {
+    rating,
+    comment,
+    name,
+    pluses,
+    minuses,
+  } = req.body;
 
   Feedback.create({
     owner: /* req.user._id */name,
     product: req.params.productId,
     rating,
     comment,
+    pluses,
+    minuses,
+    approved: false,
   })
     .then((feedback) => res.status(HTTP_STATUS_CREATED).send(feedback))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError(badRequestCreateFeedback));
+      }
+      return next(new ServerError(serverErr));
+    });
+};
+
+module.exports.updateStatus = (req, res, next) => {
+  Feedback.findByIdAndUpdate(
+    req.params.feedbackId,
+    {
+      $set: {
+        approved: true,
+      },
+    },
+    { new: true },
+  )
+    .then((feed) => {
+      if (!feed) {
+        return next(new NotFoundError('feed not found'));
+      }
+      return res.send(feed);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(new ServerError(serverErr));
     });

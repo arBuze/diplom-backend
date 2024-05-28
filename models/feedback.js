@@ -21,6 +21,16 @@ const feedbackSchema = new mongoose.Schema({
   comment: {
     type: String,
   },
+  pluses: {
+    type: String,
+  },
+  minuses: {
+    type: String,
+  },
+  approved: {
+    type: Boolean,
+
+  },
   createdAt: {
     type: Date,
     default: Date.now,
