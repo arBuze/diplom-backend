@@ -92,9 +92,18 @@ module.exports.deleteFeedback = (req, res, next) => {
 
 /* лайк отзыва */
 module.exports.likeFeedback = (req, res, next) => {
+  const { like } = req.body;
+
   Feedback.findByIdAndUpdate(
     req.params.feedbackId,
-    { $addToSet: { likes: req.user._id } },
+    {
+      $addToSet: {
+        likes: {
+          owner: req.user._id,
+          value: like,
+        },
+      },
+    },
     { new: true },
   )
     .then((feedback) => {
@@ -113,9 +122,18 @@ module.exports.likeFeedback = (req, res, next) => {
 
 /* дизлайк отзыва */
 module.exports.dislikeFeedback = (req, res, next) => {
+  const { like } = req.body;
+
   Feedback.findByIdAndUpdate(
     req.params.feedbackId,
-    { $pull: { likes: req.user._id } },
+    {
+      $pull: {
+        likes: {
+          owner: req.user._id,
+          value: like,
+        },
+      },
+    },
     { new: true },
   )
     .then((feedback) => {
