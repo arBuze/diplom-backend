@@ -16,6 +16,7 @@ module.exports.createOrder = (req, res, next) => {
     products,
     contacts,
     payment,
+    toBuild,
   } = req.body;
 
   Order.create({
@@ -25,6 +26,7 @@ module.exports.createOrder = (req, res, next) => {
     contacts,
     owner: req.user._id,
     payment,
+    toBuild,
   })
     .then((order) => res.status(HTTP_STATUS_CREATED).send(order))
     .catch((err) => {

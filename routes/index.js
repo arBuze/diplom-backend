@@ -20,7 +20,7 @@ router.post('/signout', auth, (req, res, next) => {
 });
 
 router.use('/users', auth, require('./users'));
-router.use('/products/:productId/feedbacks', require('./feedbacks'));
+router.use('/feedbacks', require('./feedbacks'));
 router.use('/products', require('./products'));
 router.use('/orders', require('./orders'));
 router.use('/repair', require('./repairs'));

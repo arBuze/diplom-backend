@@ -23,7 +23,7 @@ module.exports.createApplication = (req, res, next) => {
     owner: req.user._id,
     /* isGuest, */
     files: fileNames,
-    status,
+    seen: status,
   })
     .then((app) => res.status(HTTP_STATUS_CREATED).send({ application: app }))
     .catch(() => next(new ServerError(errorMessages.serverErr)));

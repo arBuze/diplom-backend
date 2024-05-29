@@ -15,7 +15,7 @@ const {
 
 /* получение отзывов */
 module.exports.getFeedback = (req, res, next) => {
-  Feedback.find({ product: req.params.productId, approved: true })
+  Feedback.find({})
     .then((feedbacks) => res.send(feedbacks))
     .catch(() => next(new ServerError(serverErr)));
 };
@@ -23,6 +23,7 @@ module.exports.getFeedback = (req, res, next) => {
 /* создание отзыва */
 module.exports.createFeedback = (req, res, next) => {
   const {
+    productId,
     rating,
     comment,
     name,
@@ -32,7 +33,7 @@ module.exports.createFeedback = (req, res, next) => {
 
   Feedback.create({
     owner: /* req.user._id */name,
-    product: req.params.productId,
+    product: productId,
     rating,
     comment,
     pluses,

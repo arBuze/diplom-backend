@@ -19,7 +19,7 @@ const {
   badRequestId,
 } = errorMessages;
 
-const { JWT_CODE } = process.env;
+const { JWT_CODE = 'c6f675aa09abb7bfef92e5ba8f97a2259f60a043b59ed78059611ca915bc25c2' } = process.env;
 
 module.exports.createAdmin = (req, res, next) => {
   const {

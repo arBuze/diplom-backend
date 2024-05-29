@@ -2,6 +2,7 @@ const router = require('express').Router();
 const {
   getFeedback,
   createFeedback,
+  updateStatus,
   deleteFeedback,
   likeFeedback,
   dislikeFeedback,
@@ -11,6 +12,7 @@ const { adminAuth, checkAdmin } = require('../middlewares/adminAuth');
 
 router.get('/', getFeedback);
 router.post('/', auth, createFeedback);
+router.patch('/:feedbackId', adminAuth, checkAdmin, updateStatus);
 router.delete('/:feedbackId', adminAuth, checkAdmin, deleteFeedback);
 
 router.patch('/:feedbackId/likes', auth, likeFeedback);

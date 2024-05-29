@@ -38,7 +38,7 @@ const orderSchema = new mongoose.Schema({
   payment: {
     required: true,
     type: String,
-    enum: ['СБП', 'при получении'],
+    enum: ['онлайн', 'при получении'],
     description: 'Не совпадает с возможными значениями',
   },
   products: [
