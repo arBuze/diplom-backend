@@ -2,8 +2,10 @@ const mongoose = require('mongoose');
 
 const feedbackSchema = new mongoose.Schema({
   owner: {
-    /* type: mongoose.Schema.Types.ObjectId,
-    ref: 'user', */
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+  },
+  name: {
     type: String,
     required: true,
   },

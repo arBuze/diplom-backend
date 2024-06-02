@@ -32,7 +32,8 @@ module.exports.createFeedback = (req, res, next) => {
   } = req.body;
 
   Feedback.create({
-    owner: /* req.user._id */name,
+    owner: req.user._id,
+    name,
     product: productId,
     rating,
     comment,
