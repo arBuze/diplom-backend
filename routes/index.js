@@ -24,6 +24,7 @@ router.use('/feedbacks', require('./feedbacks'));
 router.use('/products', require('./products'));
 router.use('/orders', require('./orders'));
 router.use('/repair', require('./repairs'));
+router.use('/sales', require('./sales'));
 router.use('/admin', require('./admins'));
 
 router.use('*', (req, res, next) => {

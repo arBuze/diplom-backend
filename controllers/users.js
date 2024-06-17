@@ -39,7 +39,15 @@ module.exports.createUser = (req, res, next) => {
     User.create({ isGuest: true })
       .then((user) => {
         const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-        res.status(HTTP_STATUS_CREATED).send({ token });
+
+        res.cookie('jwtU', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+          secure: true,
+          sameSite: true,
+        });
+
+        res.status(HTTP_STATUS_CREATED).send(user);
       })
       .catch(() => next(new ServerError(serverErr)));
   } else {

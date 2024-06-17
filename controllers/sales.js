@@ -17,6 +17,7 @@ module.exports.getAllSales = (req, res, next) => {
 module.exports.createSale = (req, res, next) => {
   const {
     name,
+    saleValue,
     startsAt,
     endsAt,
     image,
@@ -25,6 +26,7 @@ module.exports.createSale = (req, res, next) => {
 
   Sale.create({
     name,
+    saleValue,
     startsAt,
     endsAt,
     image,
@@ -42,6 +44,7 @@ module.exports.createSale = (req, res, next) => {
 module.exports.updateSale = (req, res, next) => {
   const {
     name,
+    saleValue,
     startsAt,
     endsAt,
     image,
@@ -53,6 +56,7 @@ module.exports.updateSale = (req, res, next) => {
     {
       $set: {
         name,
+        saleValue,
         startsAt,
         endsAt,
         image,

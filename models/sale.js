@@ -9,6 +9,10 @@ const saleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  saleValue: {
+    type: Number,
+    required: true,
+  },
   endsAt: {
     type: String,
     required: true,
